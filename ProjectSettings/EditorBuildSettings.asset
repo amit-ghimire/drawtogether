@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/TexturePaint/Scenes/drawTogether.unity
+    guid: 2d59b03e3e2780d4aa9015fe6c9d6380
   m_configObjects: {}
