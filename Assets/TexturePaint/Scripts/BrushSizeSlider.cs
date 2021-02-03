@@ -7,7 +7,7 @@ public class BrushSizeSlider : MonoSingleton<BrushSizeSlider>
 
     private void Start()
     {
-        BrushSize = 5;
+        BrushSize = 10;
     }
 
     public void ChangeBrushSize(float value) 

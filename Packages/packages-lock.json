@@ -1,14 +1,5 @@
 {
   "dependencies": {
-    "com.chimpvine.xapi": {
-      "version": "https://github.com/rewk09/chimpvinexapi.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "jillejr.newtonsoft.json-for-unity": "12.0.301"
-      },
-      "hash": "03bd6d863527564d684796f52bc8a0a4c3afb62c"
-    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -118,13 +109,6 @@
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
-    },
-    "jillejr.newtonsoft.json-for-unity": {
-      "version": "12.0.301",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://npm.cloudsmith.io/jillejr/newtonsoft-json-for-unity"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

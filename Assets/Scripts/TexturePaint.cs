@@ -35,22 +35,27 @@ public class TexturePaint : MonoBehaviour {
     // ======================================================================================================================
     // INITIALIZE -------------------------------------------------------------------
 
-    void Start () {
+    private void Start()
+    {
+        Init();
+    }
 
+    public void Init()
+    {
         // Main cam initialization ---------------------------------------------------
-                           mainC = Camera.main;
+        mainC = Camera.main;
         if (mainC == null) mainC = this.GetComponent<Camera>();
         if (mainC == null) mainC = GameObject.FindObjectOfType<Camera>();
 
 
         // Texture and Mat initalization ---------------------------------------------
         markedIlsandes = new RenderTexture(baseTexture.width, baseTexture.height, 0, RenderTextureFormat.R8);
-        albedo         = new PaintableTexture(Color.white, baseTexture.width, baseTexture.height, "_MainTex"
-            ,UVShader, meshToDraw, fixIlsandEdgesShader,markedIlsandes);
-        metalic        = new PaintableTexture(Color.white, baseTexture.width, baseTexture.height, "_MetallicGlossMap"
+        albedo = new PaintableTexture(Color.white, baseTexture.width, baseTexture.height, "_MainTex"
+            , UVShader, meshToDraw, fixIlsandEdgesShader, markedIlsandes);
+        metalic = new PaintableTexture(Color.white, baseTexture.width, baseTexture.height, "_MetallicGlossMap"
               , UVShader, meshToDraw, fixIlsandEdgesShader, markedIlsandes);
 
-        smoothness     = new PaintableTexture(Color.black, baseTexture.width, baseTexture.height, "_GlossMap"
+        smoothness = new PaintableTexture(Color.black, baseTexture.width, baseTexture.height, "_GlossMap"
               , UVShader, meshToDraw, fixIlsandEdgesShader, markedIlsandes);
 
         metalicGlossMapCombined = new RenderTexture(metalic.runTimeTexture.descriptor)
@@ -62,7 +67,7 @@ public class TexturePaint : MonoBehaviour {
 
         meshMaterial.SetTexture(albedo.id, albedo.runTimeTexture);
         meshMaterial.SetTexture(metalic.id, metalicGlossMapCombined);
-        
+
         meshMaterial.EnableKeyword("_METALLICGLOSSMAP");
 
 
@@ -71,12 +76,12 @@ public class TexturePaint : MonoBehaviour {
 
         // Command buffer inialzation ------------------------------------------------
 
-        cb_markingIlsdands      = new CommandBuffer();
+        cb_markingIlsdands = new CommandBuffer();
         cb_markingIlsdands.name = "markingIlsnads";
 
-      
+
         cb_markingIlsdands.SetRenderTarget(markedIlsandes);
-        Material mIlsandMarker  = new Material(ilsandMarkerShader);
+        Material mIlsandMarker = new Material(ilsandMarkerShader);
         cb_markingIlsdands.DrawMesh(meshToDraw, Matrix4x4.identity, mIlsandMarker);
         mainC.AddCommandBuffer(CameraEvent.AfterDepthTexture, cb_markingIlsdands);
 
@@ -84,16 +89,15 @@ public class TexturePaint : MonoBehaviour {
 
         albedo.SetActiveTexture(mainC);
     }
+
     // ======================================================================================================================
     // LOOP ---------------------------------------------------------------------------
 
     private void Update()
     {
-        if (numberOfFrames > 2) mainC.RemoveCommandBuffer(CameraEvent.AfterDepthTexture, cb_markingIlsdands);
+        //if (numberOfFrames > 2) mainC.RemoveCommandBuffer(CameraEvent.AfterDepthTexture, cb_markingIlsdands);
 
-        createMetalicGlossMap.SetTexture("_Smoothness", smoothness.runTimeTexture);
-        createMetalicGlossMap.SetTexture("_MainTex", metalic.runTimeTexture);
-        Graphics.Blit(metalic.runTimeTexture, metalicGlossMapCombined, createMetalicGlossMap);
+     
 
 
 
@@ -103,35 +107,43 @@ public class TexturePaint : MonoBehaviour {
 
 
 
-        numberOfFrames++;
+        //numberOfFrames++;
 
         // ----------------------------------------------------------------------------
         // This MUST be called to set up the painting with the mouse. 
-        albedo    .UpdateShaderParameters(meshGameobject.transform.localToWorldMatrix);
-        metalic   .UpdateShaderParameters(meshGameobject.transform.localToWorldMatrix);
-        smoothness.UpdateShaderParameters(meshGameobject.transform.localToWorldMatrix);
+      
 
+        
+        //// Paint Code ---------------------------------------------------------------------------
+        //// Setting up Mouse Parameters
 
-        // ---------------------------------------------------------------------------
-        // Setting up Mouse Parameters
+        //RaycastHit hit;
+        //Ray        ray = mainC.ScreenPointToRay(Input.mousePosition);
+        //Vector4    mwp = Vector3.positiveInfinity;
 
-        RaycastHit hit;
-        Ray        ray = mainC.ScreenPointToRay(Input.mousePosition);
-        Vector4    mwp = Vector3.positiveInfinity;
+        //if (Physics.Raycast(ray, out hit))
+        //{
+        //    if (hit.collider.gameObject.tag == "PaintObject") 
+        //    mwp = hit.point;
+        //}
 
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (hit.collider.gameObject.tag == "PaintObject") 
-            mwp = hit.point;
-        }
+        //mwp.w = Input.GetMouseButton(0)? 1 : 0;
 
-        mwp.w = Input.GetMouseButton(0)? 1 : 0;
-
-        mouseWorldPosition = mwp;
-        Shader.SetGlobalVector("_Mouse", mwp);
+        //mouseWorldPosition = mwp;
+        //Shader.SetGlobalVector("_Mouse", mwp);
 
 
         
+    }
+
+    public void ApplyMeshPaint() 
+    {
+        createMetalicGlossMap.SetTexture("_Smoothness", smoothness.runTimeTexture);
+        createMetalicGlossMap.SetTexture("_MainTex", metalic.runTimeTexture);
+        Graphics.Blit(metalic.runTimeTexture, metalicGlossMapCombined, createMetalicGlossMap);
+        albedo.UpdateShaderParameters(meshGameobject.transform.localToWorldMatrix);
+        metalic.UpdateShaderParameters(meshGameobject.transform.localToWorldMatrix);
+        smoothness.UpdateShaderParameters(meshGameobject.transform.localToWorldMatrix);
     }
 
     // ======================================================================================================================
